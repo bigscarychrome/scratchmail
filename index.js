@@ -1,19 +1,19 @@
-// backend/index.js
 import express from 'express';
 import nodemailer from 'nodemailer';
 
 const app = express();
 app.use(express.json());
 
+// this is the endpoint the Scratch extension calls
 app.post('/send-email', async (req, res) => {
     const { to, subject, message } = req.body;
 
     let transporter = nodemailer.createTransport({
-        service: 'Gmail', // or another provider
+        service: 'Gmail',
         auth: {
             user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
+            pass: process.env.EMAIL_PASS
+        }
     });
 
     try {
@@ -21,7 +21,7 @@ app.post('/send-email', async (req, res) => {
             from: process.env.EMAIL_USER,
             to,
             subject,
-            text: message,
+            text: message
         });
         res.json({ success: true });
     } catch (err) {
@@ -29,4 +29,6 @@ app.post('/send-email', async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log('Email server running on port 3000'));
+// Render requires using PORT
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
